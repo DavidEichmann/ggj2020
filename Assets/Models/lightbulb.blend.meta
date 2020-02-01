@@ -3,7 +3,12 @@ guid: 956da00f5dfccc931abe86f888b9c772
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: bulbRing
+    second: {fileID: 2100000, guid: 6d5a41d3300793d01a5fc3073a45a044, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
