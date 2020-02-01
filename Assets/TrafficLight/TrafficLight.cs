@@ -179,10 +179,7 @@ public class TrafficLight : MonoBehaviour
         {
             _konamiCode.enabled = true;
         }
-        else
-        {
-            _enableLater = true;
-        }
+        _enableLater = true;
     }
 
     public void DisableKonami()
