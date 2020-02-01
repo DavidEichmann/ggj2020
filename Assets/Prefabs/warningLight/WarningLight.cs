@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class WarningLight : MonoBehaviour
 {
+    public Color StartColor;
     public Renderer[] RendererForEmission;
     private List<Material> _emissionMaterial;
     private Light _light;
@@ -13,6 +14,7 @@ public class WarningLight : MonoBehaviour
     void Start()
     {
         _light = GetComponentInChildren<Light>();
+      
         if (RendererForEmission.Any())
         {
             _emissionMaterial = new List<Material>();
@@ -20,6 +22,12 @@ public class WarningLight : MonoBehaviour
             {
                 _emissionMaterial.Add(renderer.material);
             }
+        }
+
+        _light.color = StartColor;
+        if (_emissionMaterial.Any())
+        {
+            _emissionMaterial.ForEach(f => f.SetColor("_EmissionColor", StartColor));
         }
     }
 
