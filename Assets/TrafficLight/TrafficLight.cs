@@ -22,7 +22,7 @@ public class TrafficLight : MonoBehaviour
     // Fields
     //
 
-    private TrafficLightState State = TrafficLightState.Green;
+    public TrafficLightState State = TrafficLightState.Green;
 
     // Expected seconds to change from Green to Amber.
     public float GreenToAmberRateSeconds = 15;
