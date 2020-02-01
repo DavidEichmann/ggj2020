@@ -6,45 +6,36 @@ public class NeonLightManager : MonoBehaviour
 {
     public List<NeonLight> neonLights;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         SwitchAll(false);
-        StartCoroutine("CycleButtons");
     }
 
     public void SwitchAll(bool turnOn)
     {
-        foreach(var l in neonLights)
+        foreach (var l in neonLights)
         {
             l.SwitchLight(turnOn);
         }
     }
 
+    public void OnlyOne(KonamiKeyCode keyCode) => OnlyOne((int)keyCode);
     public void OnlyOne(int lightIndex)
     {
-        for(var i = 0; i < neonLights.Count; i++)
+        for (var i = 0; i < neonLights.Count; i++)
         {
             neonLights[i].SwitchLight(i == lightIndex);
         }
     }
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    IEnumerator CycleButtons()
-    {
-        var currentLight = 0;
-        while(true)
-        {
-            OnlyOne(currentLight);
-            currentLight = (currentLight + 1) % neonLights.Count;
-            yield return new WaitForSeconds(1);
-        }
-
-    }
+    //IEnumerator CycleButtons()
+    //{
+    //    var currentLight = 0;
+    //    while (true)
+    //    {
+    //        OnlyOne(currentLight);
+    //        currentLight = (currentLight + 1) % neonLights.Count;
+    //        yield return new WaitForSeconds(1);
+    //    }
+    //}
 }

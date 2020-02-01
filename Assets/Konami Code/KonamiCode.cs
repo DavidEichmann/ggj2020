@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public enum KonamiKeyCode
 {
-    A, B,
-    X, Y,
-    Up, Down,
-    Left, Right
+    A,
+    B,
+    X,
+    Y,
+    Left,
+    Up,
+    Right,
+    Down,
 }
 
 public class KonamiCode : MonoBehaviour
@@ -17,6 +22,7 @@ public class KonamiCode : MonoBehaviour
     public UnityEvent OnSuccess;
 
     public int length = 3;
+    [SerializeField] private NeonLightManager neonLightManager;
 
     private static readonly Array _values = Enum.GetValues(typeof(KonamiKeyCode));
 
@@ -25,13 +31,26 @@ public class KonamiCode : MonoBehaviour
 
     private void OnEnable()
     {
-        // TODO: Disable character movement
+        StartCoroutine("FlashX");
+    }
+
+    IEnumerator FlashX()
+    {
+        while (true)
+        {
+            neonLightManager.OnlyOne(KonamiKeyCode.X);
+            yield return new WaitForSeconds(0.5f);
+            neonLightManager.SwitchAll(false);
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     private void OnDisable()
     {
         _remainingCode.Clear();
         PigPlayerController.konamiMode = false;
+        StopCoroutine("FlashX");
+        neonLightManager.SwitchAll(false);
     }
 
     private void Awake()
@@ -110,7 +129,7 @@ public class KonamiCode : MonoBehaviour
             }
             else
             {
-                Debug.Log(_remainingCode.Peek());
+                neonLightManager.OnlyOne(_remainingCode.Peek());
             }
         }
         else
@@ -127,6 +146,8 @@ public class KonamiCode : MonoBehaviour
 
     private void Success()
     {
+        Debug.Log("SUCCESS");
+        neonLightManager.SwitchAll(false);
         _trafficLight.TryRepair();
         PigPlayerController.konamiMode = false;
         OnSuccess.Invoke();
@@ -134,12 +155,13 @@ public class KonamiCode : MonoBehaviour
 
     public void Generate()
     {
+        StopCoroutine("FlashX");
         var code = new KonamiKeyCode[length];
         for (var i = 0; i < length; i++)
         {
             code[i] = (KonamiKeyCode)_values.GetValue(UnityEngine.Random.Range(0, _values.Length));
         }
         _remainingCode = new Queue<KonamiKeyCode>(code);
-        Debug.Log(_remainingCode.Peek());
+        neonLightManager.OnlyOne(_remainingCode.Peek());
     }
 }
