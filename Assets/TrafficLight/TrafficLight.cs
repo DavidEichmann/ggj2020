@@ -15,6 +15,9 @@ public enum TrafficLightState
     Red
 }
 
+[System.Serializable]
+public class TrafficLightEvent : UnityEvent<GameObject> { }
+
 public class TrafficLight : MonoBehaviour
 {
     //
@@ -34,9 +37,10 @@ public class TrafficLight : MonoBehaviour
     public float AmberToRedRateSeconds = 5;
 
     // On state change event.
-    public UnityEvent OnGreenToAmber;
-    public UnityEvent OnAmberToRed;
-    public UnityEvent OnAmberToGreen;
+    public TrafficLightEvent OnGreenToAmber;
+    public TrafficLightEvent OnAmberToRed;
+    public TrafficLightEvent OnAmberToGreen;
+    public TrafficLightEvent OnRedToGreen;
 
     // Expected time from Green to Red.
     public float ExpectedGreenToRedSeconds
@@ -76,9 +80,6 @@ public class TrafficLight : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        OnGreenToAmber = OnGreenToAmber ?? new UnityEvent();
-        OnAmberToRed   = OnAmberToRed   ?? new UnityEvent();
-        OnAmberToGreen = OnAmberToGreen ?? new UnityEvent();
     }
 
     // Update is called once per frame
@@ -92,7 +93,7 @@ public class TrafficLight : MonoBehaviour
                     var oldState = State;
                     State = TrafficLightState.Amber;
                     AmberStartTime = Time.time;
-                    OnGreenToAmber.Invoke();
+                    OnGreenToAmber.Invoke(gameObject);
                 }
 
                 break;
@@ -102,7 +103,7 @@ public class TrafficLight : MonoBehaviour
                 if (timeSinceEndSafeAmber > 0 && RandomOccurence(AmberToRedRateSeconds))
                 {
                     State = TrafficLightState.Red;
-                    OnAmberToRed.Invoke();
+                    OnAmberToRed.Invoke(gameObject);
                 }
 
                 break;
@@ -114,13 +115,13 @@ public class TrafficLight : MonoBehaviour
     }
 
     // Repair this traffic light.
-    // Only has effect if in amber state.
+    // Has no effect in Green state.
     public void TryRepair()
     {
-        if (State == TrafficLightState.Amber)
+        if (State != TrafficLightState.Green)
         {
             State = TrafficLightState.Green;
-            OnAmberToGreen.Invoke();
+            OnAmberToGreen.Invoke(gameObject);
         }
     }
 
@@ -128,7 +129,7 @@ public class TrafficLight : MonoBehaviour
     // Assumes this is called over a Time.deltaTime time period.
     private bool RandomOccurence(float rateSeconds)
     {
-        // Convert from  secnods per occurence to occurences per second.
+        // Convert from seconds per occurence to occurences per second.
         float occurencesPerSecond = 1 / rateSeconds;
 
         // This is based on a poisson distribution.

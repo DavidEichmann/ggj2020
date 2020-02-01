@@ -77,7 +77,7 @@ public class PigPlayerController : MonoBehaviour
     void Move(float move)
     {
 
-        _rigidbody.velocity = new Vector3(move * 10f, _rigidbody.velocity.y);
+        _rigidbody.AddForce(Vector3.right * move * 10f);
 
         if (move > 0 && !_facingRight)
         {
