@@ -149,6 +149,7 @@ public class KonamiCode : MonoBehaviour
         _trafficLight.TryRepair();
         PigPlayerController.konamiMode = false;
         OnSuccess.Invoke();
+        enabled = false;
     }
 
     public void Generate()

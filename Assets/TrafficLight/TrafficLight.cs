@@ -53,7 +53,7 @@ public class TrafficLight : MonoBehaviour
 
     private WarningLight _warningLight;
     private KonamiCode _konamiCode;
-    private bool _enableLater = false;
+    private bool _insideBounds = false;
 
     // Start time we enetered Amber state.
     // Only valid when `State == Amber`
@@ -101,11 +101,10 @@ public class TrafficLight : MonoBehaviour
             case TrafficLightState.Green:
                 if (RandomOccurence(GreenToAmberRateSeconds))
                 {
-                    var oldState = State;
                     State = TrafficLightState.Amber;
                     AmberStartTime = Time.time;
                     _warningLight.SetColor(amber);
-                    if (_enableLater) EnableKonami();
+                    if (_insideBounds) EnableKonami();
                     OnGreenToAmber.Invoke(gameObject);
                 }
 
@@ -117,7 +116,7 @@ public class TrafficLight : MonoBehaviour
                 {
                     State = TrafficLightState.Red;
                     _warningLight.SetColor(red);
-                    if (_enableLater) EnableKonami();
+                    if (_insideBounds) EnableKonami();
                     OnAmberToRed.Invoke(gameObject);
                 }
 
@@ -175,16 +174,16 @@ public class TrafficLight : MonoBehaviour
 
     public void EnableKonami()
     {
+        _insideBounds = true;
         if (State != TrafficLightState.Green)
         {
             _konamiCode.enabled = true;
         }
-        _enableLater = true;
     }
 
     public void DisableKonami()
     {
-        _enableLater = false;
+        _insideBounds = false;
         _konamiCode.enabled = false;
     }
 }
