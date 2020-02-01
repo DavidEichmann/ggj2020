@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class WarningLight : MonoBehaviour
 {
@@ -21,15 +18,20 @@ public class WarningLight : MonoBehaviour
     public void SetColor(string colorString)
     {
         if (ColorUtility.TryParseHtmlString(colorString, out var color))
-        {           
-            _light.color = color;          
-            _rendererForEmission.material.SetColor("_EmissionColor", color);          
+        {
+            SetColor(color);
         }
+    }
+
+    public void SetColor(Color color)
+    {
+        _light.color = color;
+        _rendererForEmission.material.SetColor("_EmissionColor", color);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

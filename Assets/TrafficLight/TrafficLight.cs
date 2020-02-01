@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 public enum TrafficLightState
@@ -24,8 +22,7 @@ public class TrafficLight : MonoBehaviour
     // Fields
     //
 
-    // Controlled by TrafficLightManager.
-    public TrafficLightState State = TrafficLightState.Green;
+    private TrafficLightState State = TrafficLightState.Green;
 
     // Expected seconds to change from Green to Amber.
     public float GreenToAmberRateSeconds = 15;
@@ -35,6 +32,10 @@ public class TrafficLight : MonoBehaviour
 
     // Expected seconds to change from Amber to Red after MinAmberTime.
     public float AmberToRedRateSeconds = 5;
+
+    public Color green;
+    public Color amber;
+    public Color red;
 
     // On state change event.
     public TrafficLightEvent OnGreenToAmber;
@@ -50,6 +51,8 @@ public class TrafficLight : MonoBehaviour
     //
     // Properties
     //
+
+    private WarningLight _warningLight;
 
     // Start time we enetered Amber state.
     // Only valid when `State == Amber`
@@ -77,9 +80,14 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
+        _warningLight = GetComponent<WarningLight>();
+    }
+
+    private void Start()
+    {
+        _warningLight.SetColor(green);
     }
 
     // Update is called once per frame
@@ -93,6 +101,7 @@ public class TrafficLight : MonoBehaviour
                     var oldState = State;
                     State = TrafficLightState.Amber;
                     AmberStartTime = Time.time;
+                    _warningLight.SetColor(amber);
                     OnGreenToAmber.Invoke(gameObject);
                 }
 
@@ -103,6 +112,7 @@ public class TrafficLight : MonoBehaviour
                 if (timeSinceEndSafeAmber > 0 && RandomOccurence(AmberToRedRateSeconds))
                 {
                     State = TrafficLightState.Red;
+                    _warningLight.SetColor(red);
                     OnAmberToRed.Invoke(gameObject);
                 }
 
@@ -118,10 +128,20 @@ public class TrafficLight : MonoBehaviour
     // Has no effect in Green state.
     public void TryRepair()
     {
-        if (State != TrafficLightState.Green)
+        switch (State)
         {
-            State = TrafficLightState.Green;
-            OnAmberToGreen.Invoke(gameObject);
+            case TrafficLightState.Green:
+                break;
+            case TrafficLightState.Amber:
+                State = TrafficLightState.Green;
+                _warningLight.SetColor(green);
+                OnAmberToGreen.Invoke(gameObject);
+                break;
+            case TrafficLightState.Red:
+                State = TrafficLightState.Green;
+                _warningLight.SetColor(green);
+                OnRedToGreen.Invoke(gameObject);
+                break;
         }
     }
 
