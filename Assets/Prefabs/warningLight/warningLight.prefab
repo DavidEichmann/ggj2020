@@ -43,7 +43,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.5
+  m_Intensity: 1.2
   m_Range: 11.3
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -186,5 +186,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6786f13114d625a4abbe77092f5bb725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RendererForEmission:
-  - {fileID: 6967017485677670175}
+  StartColor: {r: 0, g: 0, b: 0, a: 0}

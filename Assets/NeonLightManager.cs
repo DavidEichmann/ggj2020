@@ -13,14 +13,18 @@ public class NeonLightManager : MonoBehaviour
         StartCoroutine("CycleButtons");
     }
 
-    public void SwitchAll(bool turnOn){
-        foreach(var l in neonLights){
+    public void SwitchAll(bool turnOn)
+    {
+        foreach(var l in neonLights)
+        {
             l.SwitchLight(turnOn);
         }
     }
 
-    public void AllButOne(int lightIndex){
-        for(var i =0; i < neonLights.Count; i++){
+    public void OnlyOne(int lightIndex)
+    {
+        for(var i = 0; i < neonLights.Count; i++)
+        {
             neonLights[i].SwitchLight(i == lightIndex);
         }
     }
@@ -32,10 +36,12 @@ public class NeonLightManager : MonoBehaviour
         
     }
 
-    IEnumerator CycleButtons(){
+    IEnumerator CycleButtons()
+    {
         var currentLight = 0;
-        while(true){
-            AllButOne(currentLight);
+        while(true)
+        {
+            OnlyOne(currentLight);
             currentLight = (currentLight + 1) % neonLights.Count;
             yield return new WaitForSeconds(1);
         }

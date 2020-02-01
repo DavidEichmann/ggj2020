@@ -15,8 +15,10 @@ public class NeonLight : MonoBehaviour
         renderer.material.SetColor("_EmissionColor", nColor);
     }
 
-    public void SwitchLight(bool turnOn){
-        if(turnOn){
+    public void SwitchLight(bool turnOn)
+    {
+        if(turnOn)
+        {
             renderer.material.SetColor("_EmissionColor", nColor);
         }
         else{
