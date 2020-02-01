@@ -12,7 +12,7 @@ public class PigPlayerController : MonoBehaviour
     private bool _facingRight = false;
     private float _distanceToGround;
 
-    
+
 
     // Start is called before the first frame update
     void Awake()
@@ -20,17 +20,17 @@ public class PigPlayerController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
         _distanceToGround = _collider.bounds.extents.y;
-      
+
     }
 
     private void Update()
     {
         Physics.gravity = _gravity;
-        if (Input.GetAxisRaw("Horizontal") > 0)
+        if (Input.GetAxisRaw("Horizontal") == 1)
         {
             Move(_moveSpeed);
         }
-        else if (Input.GetAxisRaw("Horizontal") < 0)
+        else if (Input.GetAxisRaw("Horizontal") == -1)
         {
             Move(-_moveSpeed);
         }
@@ -43,10 +43,10 @@ public class PigPlayerController : MonoBehaviour
         {
             Jump();
         }
-       
+
     }
 
-    bool IsGrounded() 
+    bool IsGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, _distanceToGround * 1.05f);
     }
