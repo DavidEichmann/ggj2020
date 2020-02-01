@@ -6,12 +6,10 @@ public class PigPlayerController : MonoBehaviour
 {
     public float _jumpforce;
     public float _moveSpeed;
-    public float _currentMove;
     public Vector3 _gravity = new Vector3(0, -40);
     private Rigidbody _rigidbody;
     private CapsuleCollider _collider;
-    private bool _facingRight = false;  
-    private Vector3 _velocity = Vector3.zero;
+    private bool _facingRight = false;
     private float _distanceToGround;
 
     
@@ -30,16 +28,15 @@ public class PigPlayerController : MonoBehaviour
         Physics.gravity = _gravity;
         if (Input.GetAxisRaw("Horizontal") > 0)
         {
-            _currentMove = _moveSpeed;
+            Move(_moveSpeed);
         }
         else if (Input.GetAxisRaw("Horizontal") < 0)
         {
-            _currentMove = -_moveSpeed;
+            Move(-_moveSpeed);
         }
         else
         {
-            _rigidbody.velocity = new Vector3(0,_rigidbody.velocity.y, _rigidbody.velocity.z);
-            _currentMove = 0;
+            Move(0);
         }
 
         if (Input.GetButtonDown("Jump"))
@@ -49,14 +46,9 @@ public class PigPlayerController : MonoBehaviour
        
     }
 
-    void FixedUpdate()
-    {
-        Move(_currentMove);
-    }
-
     bool IsGrounded() 
     {
-        return Physics.Raycast(transform.position, -Vector3.up, _distanceToGround + 0.1f);
+        return Physics.Raycast(transform.position, Vector3.down, _distanceToGround * 1.05f);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -75,16 +67,15 @@ public class PigPlayerController : MonoBehaviour
         }
     }
 
-    void Move(float move)
+    void Move(float rightVelocity)
     {
+        _rigidbody.velocity = new Vector3(rightVelocity, _rigidbody.velocity.y, _rigidbody.velocity.z);
 
-        _rigidbody.AddForce(Vector3.right * move * 10f);
-
-        if (move > 0 && !_facingRight)
+        if (rightVelocity > 0 && !_facingRight)
         {
             Flip();
         }
-        else if (move < 0 && _facingRight)
+        else if (rightVelocity < 0 && _facingRight)
         {
             Flip();
         }
