@@ -23,8 +23,7 @@ public class WarningLight : MonoBehaviour
         if (ColorUtility.TryParseHtmlString(colorString, out var color))
         {           
             _light.color = color;          
-            _rendererForEmission.material.SetColor("_EmissionColor", color);
-            
+            _rendererForEmission.material.SetColor("_EmissionColor", color);          
         }
     }
 
