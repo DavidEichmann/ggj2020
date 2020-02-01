@@ -11,6 +11,7 @@ public class PigPlayerController : MonoBehaviour
     private CapsuleCollider _collider;
     private bool _facingRight = false;
     private float _distanceToGround;
+    public static bool konamiMode = false;
 
 
 
@@ -39,7 +40,7 @@ public class PigPlayerController : MonoBehaviour
             Move(0);
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (!konamiMode && Input.GetButtonDown("Jump"))
         {
             Jump();
         }
