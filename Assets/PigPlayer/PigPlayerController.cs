@@ -38,6 +38,7 @@ public class PigPlayerController : MonoBehaviour
         }
         else
         {
+            _rigidbody.velocity = new Vector3(0,_rigidbody.velocity.y, _rigidbody.velocity.z);
             _currentMove = 0;
         }
 
