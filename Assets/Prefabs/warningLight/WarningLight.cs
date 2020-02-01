@@ -7,7 +7,7 @@ public class WarningLight : MonoBehaviour
     private Light _light;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _light = GetComponentInChildren<Light>();
         _rendererForEmission = GetComponent<MeshRenderer>();
