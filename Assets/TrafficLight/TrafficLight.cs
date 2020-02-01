@@ -22,7 +22,7 @@ public class TrafficLight : MonoBehaviour
     // Fields
     //
 
-    public TrafficLightState State = TrafficLightState.Green;
+    public TrafficLightState State { get; private set; }
 
     // Expected seconds to change from Green to Amber.
     public float GreenToAmberRateSeconds = 15;
@@ -87,6 +87,7 @@ public class TrafficLight : MonoBehaviour
 
     private void Start()
     {
+        State = TrafficLightState.Green;
         _warningLight.SetColor(green);
     }
 

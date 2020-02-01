@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5674947437421059816}
   - component: {fileID: 2161164646817800721}
   - component: {fileID: 4391175217779915486}
+  - component: {fileID: 2337932704558822604}
+  - component: {fileID: 1744988510943977727}
   m_Layer: 0
   m_Name: RepairRoom
   m_TagString: Untagged
@@ -95,9 +97,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6786f13114d625a4abbe77092f5bb725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartColor: {r: 0, g: 0, b: 0, a: 0}
-  RendererForEmission:
-  - {fileID: 2161164646817800721}
+  StartColor: {r: 0.4, g: 1, b: 0.2, a: 0}
+--- !u!114 &2337932704558822604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414658577369077453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede622da378757a469aa228ba6f15cfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GreenToAmberRateSeconds: 15
+  MinAmberTime: 10
+  AmberToRedRateSeconds: 5
+  green: {r: 0.4, g: 1, b: 0.2, a: 0}
+  amber: {r: 1, g: 0.6397213, b: 0.19999999, a: 0}
+  red: {r: 1, g: 0.22493628, b: 0.19999999, a: 0}
+  OnGreenToAmber:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAmberToRed:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAmberToGreen:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRedToGreen:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1744988510943977727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414658577369077453}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b77b25d74a87ba499bd68d2a2f40a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnFailure:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  length: 3
 --- !u!1 &1870817976210561155
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,28 +348,28 @@ MonoBehaviour:
   OnEnter:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4391175217779915486}
-        m_MethodName: SetColor
-        m_Mode: 5
+      - m_Target: {fileID: 1744988510943977727}
+        m_MethodName: set_enabled
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: '#66ff33'
-          m_BoolArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
   OnExit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4391175217779915486}
-        m_MethodName: SetColor
-        m_Mode: 5
+      - m_Target: {fileID: 1744988510943977727}
+        m_MethodName: set_enabled
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: '#000000'
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2

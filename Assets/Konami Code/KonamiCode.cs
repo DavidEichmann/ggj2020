@@ -31,6 +31,7 @@ public class KonamiCode : MonoBehaviour
     private void OnDisable()
     {
         _remainingCode.Clear();
+        PigPlayerController.konamiMode = false;
     }
 
     private void Awake()
@@ -45,6 +46,7 @@ public class KonamiCode : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.LeftControl))
             {
                 Generate();
+                PigPlayerController.konamiMode = true;
             }
             return;
         }
@@ -106,6 +108,10 @@ public class KonamiCode : MonoBehaviour
             {
                 Success();
             }
+            else
+            {
+                Debug.Log(_remainingCode.Peek());
+            }
         }
         else
         {
@@ -122,6 +128,7 @@ public class KonamiCode : MonoBehaviour
     private void Success()
     {
         _trafficLight.TryRepair();
+        PigPlayerController.konamiMode = false;
         OnSuccess.Invoke();
     }
 
@@ -133,9 +140,6 @@ public class KonamiCode : MonoBehaviour
             code[i] = (KonamiKeyCode)_values.GetValue(UnityEngine.Random.Range(0, _values.Length));
         }
         _remainingCode = new Queue<KonamiKeyCode>(code);
-        foreach (var c in code)
-        {
-            Debug.Log(c);
-        }
+        Debug.Log(_remainingCode.Peek());
     }
 }
