@@ -350,9 +350,9 @@ MonoBehaviour:
   OnEnter:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1744988510943977727}
-        m_MethodName: set_enabled
-        m_Mode: 6
+      - m_Target: {fileID: 2337932704558822604}
+        m_MethodName: EnableKonami
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -364,9 +364,9 @@ MonoBehaviour:
   OnExit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1744988510943977727}
-        m_MethodName: set_enabled
-        m_Mode: 6
+      - m_Target: {fileID: 2337932704558822604}
+        m_MethodName: DisableKonami
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

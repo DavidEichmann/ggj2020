@@ -59,10 +59,6 @@ public class KonamiCode : MonoBehaviour
     {
         if (_remainingCode.Count == 0)
         {
-            if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                Generate();
-            }
             return;
         }
 
