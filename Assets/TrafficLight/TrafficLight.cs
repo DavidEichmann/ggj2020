@@ -40,8 +40,7 @@ public class TrafficLight : MonoBehaviour
     // On state change event.
     public TrafficLightEvent OnGreenToAmber;
     public TrafficLightEvent OnAmberToRed;
-    public TrafficLightEvent OnAmberToGreen;
-    public TrafficLightEvent OnRedToGreen;
+    public TrafficLightEvent BrokenToGreen;
 
     // Expected time from Green to Red.
     public float ExpectedGreenToRedSeconds
@@ -138,15 +137,11 @@ public class TrafficLight : MonoBehaviour
             case TrafficLightState.Green:
                 break;
             case TrafficLightState.Amber:
-                State = TrafficLightState.Green;
-                _warningLight.SetColor(green);
-                OnAmberToGreen.Invoke(gameObject);
-                break;
             case TrafficLightState.Red:
                 State = TrafficLightState.Green;
                 _warningLight.SetColor(green);
-                OnRedToGreen.Invoke(gameObject);
-                break;
+                BrokenToGreen.Invoke(gameObject);
+                break;   
         }
     }
 
