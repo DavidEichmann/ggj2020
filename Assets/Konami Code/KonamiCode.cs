@@ -106,6 +106,10 @@ public class KonamiCode : MonoBehaviour
             {
                 Success();
             }
+            else
+            {
+                Debug.Log(_remainingCode.Peek());
+            }
         }
         else
         {
@@ -133,9 +137,6 @@ public class KonamiCode : MonoBehaviour
             code[i] = (KonamiKeyCode)_values.GetValue(UnityEngine.Random.Range(0, _values.Length));
         }
         _remainingCode = new Queue<KonamiKeyCode>(code);
-        foreach (var c in code)
-        {
-            Debug.Log(c);
-        }
+        Debug.Log(_remainingCode.Peek());
     }
 }
