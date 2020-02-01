@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PigPlayerController : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PigPlayerController : MonoBehaviour
     private float _distanceToGround;
     public static bool konamiMode = false;
 
-
+    public UnityEvent OnJump;
 
     // Start is called before the first frame update
     void Awake()
@@ -65,6 +66,7 @@ public class PigPlayerController : MonoBehaviour
         if (IsGrounded())
         {
             _rigidbody.AddForce(new Vector2(0f, _jumpforce), ForceMode.Impulse);
+            OnJump.Invoke();
         }
     }
 
