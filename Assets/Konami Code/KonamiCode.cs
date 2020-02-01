@@ -31,25 +31,22 @@ public class KonamiCode : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine("FlashX");
+        Generate();
+        PigPlayerController.konamiMode = true;
     }
 
-    IEnumerator FlashX()
+    IEnumerator FlashAllError()
     {
-        while (true)
-        {
-            neonLightManager.OnlyOne(KonamiKeyCode.X);
-            yield return new WaitForSeconds(0.5f);
-            neonLightManager.SwitchAll(false);
-            yield return new WaitForSeconds(0.5f);
-        }
+        neonLightManager.SwitchAll(true);
+        yield return new WaitForSeconds(0.5f);
+        neonLightManager.SwitchAll(false);
+        Generate();
     }
 
     private void OnDisable()
     {
         _remainingCode.Clear();
         PigPlayerController.konamiMode = false;
-        StopCoroutine("FlashX");
         neonLightManager.SwitchAll(false);
     }
 
@@ -65,7 +62,6 @@ public class KonamiCode : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.LeftControl))
             {
                 Generate();
-                PigPlayerController.konamiMode = true;
             }
             return;
         }
@@ -140,13 +136,12 @@ public class KonamiCode : MonoBehaviour
 
     private void Error()
     {
-        Generate();
+        StartCoroutine("FlashAllError");
         OnFailure.Invoke();
     }
 
     private void Success()
     {
-        Debug.Log("SUCCESS");
         neonLightManager.SwitchAll(false);
         _trafficLight.TryRepair();
         PigPlayerController.konamiMode = false;
@@ -155,7 +150,6 @@ public class KonamiCode : MonoBehaviour
 
     public void Generate()
     {
-        StopCoroutine("FlashX");
         var code = new KonamiKeyCode[length];
         for (var i = 0; i < length; i++)
         {
