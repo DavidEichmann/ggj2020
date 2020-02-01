@@ -9,7 +9,7 @@ public class NeonLight : MonoBehaviour
     public Color nColor;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         renderer = GetComponent<MeshRenderer>();
         renderer.material.SetColor("_EmissionColor", nColor);
