@@ -1,31 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class KonamiCodeSystem : MonoBehaviour
+public enum KonamiKeyCode
 {
-    public delegate void FailAction();
-    public static event FailAction OnFail;
+    A, B,
+    X, Y,
+    Up, Down,
+    Left, Right
+}
 
-    public delegate void SuccessAction();
-    public static event SuccessAction OnSuccess;
+public class KonamiCode : MonoBehaviour
+{
+    public UnityEvent OnFailure;
+    public UnityEvent OnSuccess;
 
-    private static Queue<KonamiKeyCode> _remainingCode = new Queue<KonamiKeyCode>();
+    public int length = 3;
 
-    public static void AddCode(KonamiKeyCode[] code)
+    private static readonly Array _values = Enum.GetValues(typeof(KonamiKeyCode));
+
+    private Queue<KonamiKeyCode> _remainingCode = new Queue<KonamiKeyCode>();
+    private TrafficLight _trafficLight;
+
+    private void OnEnable()
     {
-        _remainingCode = new Queue<KonamiKeyCode>(code);
-        Debug.Log(_remainingCode.Peek());
+        // TODO: Disable character movement
+    }
+
+    private void OnDisable()
+    {
+        _remainingCode.Clear();
     }
 
     private void Awake()
     {
-        gameObject.AddComponent<DPadButtons>();
+        _trafficLight = GetComponent<TrafficLight>();
     }
 
     private void Update()
     {
         if (_remainingCode.Count == 0)
         {
+            if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                Generate();
+            }
             return;
         }
 
@@ -86,10 +106,6 @@ public class KonamiCodeSystem : MonoBehaviour
             {
                 Success();
             }
-            else
-            {
-                Debug.Log(_remainingCode.Peek());
-            }
         }
         else
         {
@@ -99,12 +115,27 @@ public class KonamiCodeSystem : MonoBehaviour
 
     private void Error()
     {
-        _remainingCode.Clear();
-        OnFail?.Invoke();
+        Generate();
+        OnFailure.Invoke();
     }
 
     private void Success()
     {
-        OnSuccess?.Invoke();
+        _trafficLight.TryRepair();
+        OnSuccess.Invoke();
+    }
+
+    public void Generate()
+    {
+        var code = new KonamiKeyCode[length];
+        for (var i = 0; i < length; i++)
+        {
+            code[i] = (KonamiKeyCode)_values.GetValue(UnityEngine.Random.Range(0, _values.Length));
+        }
+        _remainingCode = new Queue<KonamiKeyCode>(code);
+        foreach (var c in code)
+        {
+            Debug.Log(c);
+        }
     }
 }
