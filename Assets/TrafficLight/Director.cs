@@ -36,4 +36,12 @@ public class Director : MonoBehaviour
             }
         }
     }
+    public string ScoreString(bool subseconds)
+    {
+        float score = Score;
+        int mins = Mathf.FloorToInt(score / 60);
+        string minsStr = mins > 0 ? "" : $"{mins}:";
+        float secs = score % 60;
+        return minsStr + (subseconds ? $"{secs:F2}" : $"{Mathf.FloorToInt(secs):D2}");
+    }
 }
