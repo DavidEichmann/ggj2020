@@ -110,6 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede622da378757a469aa228ba6f15cfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MinGreenTime: 5
   GreenToAmberRateSeconds: 15
   MinAmberTime: 10
   AmberToRedRateSeconds: 5
@@ -149,6 +150,17 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4391175217779915486}
         m_MethodName: StopAllCoroutines
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1744988510943977727}
+        m_MethodName: IncreaseDifficulty
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
