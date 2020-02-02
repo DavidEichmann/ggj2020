@@ -8,9 +8,18 @@ public class Director : MonoBehaviour
 {
     public UnityEvent OnGameOver;
 
+    // Time at which the game was lost. Null if not lost yet
     public float? GameOverTime { get; private set; } = null;
 
     public bool IsGameOver => GameOverTime.HasValue;
+
+    // Health between 0 and 1. 1 means full health.
+    public float Health = 1;
+
+    // Damage per second that a red a traffic light does.
+    // Guideline is that at full health and all lights red, you'll have about 10 seconds to lose all health.
+    // There are 5 lights, so thats 50 seconds to lose all (1.0) health in 50 seconds from a single red light.
+    public float RedDamageRate = 1.0f  / 50.0f;
 
     public float Score => GameOverTime ?? Time.time;
 
@@ -27,9 +36,12 @@ public class Director : MonoBehaviour
     {
         if (!IsGameOver)
         {
-            bool allTrafficLightsAreRed = _trafficLights
-                .All(trafficLight => trafficLight.State == TrafficLightState.Red);
-            if (allTrafficLightsAreRed)
+            int numRedLights = _trafficLights.Count(trafficLight => trafficLight.State == TrafficLightState.Red);
+            float healthLossRate = numRedLights * RedDamageRate;
+            float damage = Time.deltaTime * healthLossRate;
+            Health = Mathf.Max(0, Health - damage);
+
+            if (Health <= 0)
             {
                 GameOverTime = Time.time;
                 OnGameOver.Invoke();
