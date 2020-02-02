@@ -22,10 +22,13 @@ public class Director : MonoBehaviour
     public float RedDamageRate = 1.0f  / 50.0f;
 
     // Speed of the bus in Km/h
-    public float SpeedKph = 1000;
+    public float SpeedKph = 120;
 
     // Distance travelled (stops increasing on game over).
     public float DistanceTravelled = 0;
+
+    // Meters traveled rounded down.
+    public int Score => Mathf.FloorToInt(DistanceTravelled * 1000);
 
     private TrafficLight[] _trafficLights;
 
@@ -55,8 +58,5 @@ public class Director : MonoBehaviour
         }
     }
     public string ScoreString(bool subseconds)
-    {
-        int score = Mathf.FloorToInt(DistanceTravelled);
-        return $"{score} Km";
-    }
+        => $"{Score} m";
 }
