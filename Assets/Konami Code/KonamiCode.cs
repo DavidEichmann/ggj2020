@@ -35,7 +35,7 @@ public class KonamiCode : MonoBehaviour
         PigPlayerController.konamiMode = true;
     }
 
-    IEnumerator FlashAllError()
+    private IEnumerator FlashAllError()
     {
         neonLightManager.SwitchAll(true);
         yield return new WaitForSeconds(0.5f);
@@ -43,7 +43,7 @@ public class KonamiCode : MonoBehaviour
         Generate();
     }
 
-    IEnumerator FlashNext()
+    private IEnumerator FlashNext()
     {
         neonLightManager.SwitchAll(false);
         yield return new WaitForSeconds(0.1f);
