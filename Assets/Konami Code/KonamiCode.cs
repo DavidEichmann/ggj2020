@@ -52,6 +52,7 @@ public class KonamiCode : MonoBehaviour
 
     private void OnDisable()
     {
+        StopAllCoroutines();
         _remainingCode.Clear();
         PigPlayerController.konamiMode = false;
         neonLightManager.SwitchAll(false);
