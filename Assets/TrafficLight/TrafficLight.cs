@@ -40,7 +40,7 @@ public class TrafficLight : MonoBehaviour
     public bool Paused = true;
 
     // Game time when this gets automatically unpaused
-    public float StartTime = 10;
+    public float StartTime = 20;
 
     private float? UnpauseTime;
 
