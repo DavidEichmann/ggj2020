@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class NeonLightManager : MonoBehaviour
@@ -27,15 +26,4 @@ public class NeonLightManager : MonoBehaviour
             neonLights[i].SwitchLight(i == lightIndex);
         }
     }
-
-    //IEnumerator CycleButtons()
-    //{
-    //    var currentLight = 0;
-    //    while (true)
-    //    {
-    //        OnlyOne(currentLight);
-    //        currentLight = (currentLight + 1) % neonLights.Count;
-    //        yield return new WaitForSeconds(1);
-    //    }
-    //}
 }

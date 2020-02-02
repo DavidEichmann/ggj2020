@@ -24,8 +24,11 @@ public class TrafficLight : MonoBehaviour
 
     public TrafficLightState State { get; private set; }
 
+    // Minimum time spent in green state before changing to Amber.
+    public float MinGreenTime = 5;
+
     // Expected seconds to change from Green to Amber.
-    public float GreenToAmberRateSeconds = 15;
+    public float GreenToAmberRateSeconds = 10;
 
     // Minimum time spent in amber state before changing to Red
     public float MinAmberTime = 10;
@@ -80,6 +83,32 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
+    // Start time we enetered Green state.
+    // Only valid when `State == Green`
+    private float __GreenStartTime;
+    private float GreenStartTime
+    {
+        get
+        {
+            if (State != TrafficLightState.Green)
+            {
+                Debug.LogError("Trying to get GreenStartTime, but State is not Green, it is: " + State);
+            }
+
+            return __GreenStartTime;
+        }
+
+        set
+        {
+            if (State != TrafficLightState.Green)
+            {
+                Debug.LogError("Trying to set GreenStartTime, but State is not Green, it is: " + State);
+            }
+
+            __GreenStartTime = value;
+        }
+    }
+
     private void Awake()
     {
         _warningLight = GetComponent<WarningLight>();
@@ -98,7 +127,8 @@ public class TrafficLight : MonoBehaviour
         switch (State)
         {
             case TrafficLightState.Green:
-                if (RandomOccurence(GreenToAmberRateSeconds))
+                float timeSinceEndSafeGreen = Time.time - (GreenStartTime + MinGreenTime);
+                if (timeSinceEndSafeGreen > 0 && RandomOccurence(GreenToAmberRateSeconds))
                 {
                     State = TrafficLightState.Amber;
                     AmberStartTime = Time.time;
