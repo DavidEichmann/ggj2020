@@ -162,4 +162,12 @@ public class KonamiCode : MonoBehaviour
         _remainingCode = new Queue<KonamiKeyCode>(code);
         StartCoroutine("FlashNext");
     }
+
+    public void IncreaseDifficulty()
+    {
+        if (UnityEngine.Random.value < 0.5f)
+        {
+            length++;
+        }
+    }
 }

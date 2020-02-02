@@ -118,6 +118,7 @@ public class TrafficLight : MonoBehaviour
     private void Start()
     {
         State = TrafficLightState.Green;
+        GreenStartTime = Time.time;
         _warningLight.SetColor(green);
     }
 
@@ -168,6 +169,7 @@ public class TrafficLight : MonoBehaviour
             case TrafficLightState.Amber:
             case TrafficLightState.Red:
                 State = TrafficLightState.Green;
+                GreenStartTime = Time.time;
                 _warningLight.SetColor(green);
                 BrokenToGreen.Invoke(gameObject);
                 break;   
