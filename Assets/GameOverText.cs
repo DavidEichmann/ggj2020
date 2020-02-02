@@ -17,7 +17,7 @@ public class GameOverText : MonoBehaviour
     void Update()
     {
         GetComponent<Text>().text = _director.IsGameOver
-            ? $"Game Over!\n{_director.ScoreString(true)}"
+            ? $"Game Over! {_director.ScoreString(true)}"
             : "";
     }
 }
