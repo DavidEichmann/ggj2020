@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PigPlayerController : MonoBehaviour
 {
@@ -13,7 +14,10 @@ public class PigPlayerController : MonoBehaviour
     private float _distanceToGround;
     public static bool konamiMode = false;
 
-
+    public GameObject SoundJumpO;
+    public AudioSource SoundJump => SoundJumpO.GetComponent<AudioSource>();
+    public GameObject SoundWalkLoopO;
+    public AudioSource SoundWalkLoop => SoundWalkLoopO.GetComponent<AudioSource>();
 
     // Start is called before the first frame update
     void Awake()
@@ -27,24 +31,28 @@ public class PigPlayerController : MonoBehaviour
     private void Update()
     {
         Physics.gravity = _gravity;
-        if (Input.GetAxisRaw("Horizontal") == 1)
+        float movement;
         {
-            Move(_moveSpeed);
+            if (Input.GetAxisRaw("Horizontal") == 1)
+            {
+                movement = _moveSpeed;
+            }
+            else if (Input.GetAxisRaw("Horizontal") == -1)
+            {
+                movement = -_moveSpeed;
+            }
+            else
+            {
+                movement = 0;
+            }
         }
-        else if (Input.GetAxisRaw("Horizontal") == -1)
-        {
-            Move(-_moveSpeed);
-        }
-        else
-        {
-            Move(0);
-        }
+
+        Move(movement);
 
         if (!konamiMode && Input.GetButtonDown("Jump"))
         {
             Jump();
         }
-
     }
 
     bool IsGrounded()
@@ -65,6 +73,7 @@ public class PigPlayerController : MonoBehaviour
         if (IsGrounded())
         {
             _rigidbody.AddForce(new Vector2(0f, _jumpforce), ForceMode.Impulse);
+            SoundJump.Play();
         }
     }
 
@@ -79,6 +88,17 @@ public class PigPlayerController : MonoBehaviour
         else if (rightVelocity < 0 && _facingRight)
         {
             Flip();
+        }
+
+        var soundWalkLoop = SoundWalkLoop;
+        var isWalking = _rigidbody.velocity.x != 0 && IsGrounded();
+        if (SoundWalkLoop.isPlaying && !isWalking)
+        {
+            soundWalkLoop.Pause();
+        }
+        if (!SoundWalkLoop.isPlaying && isWalking)
+        {
+            soundWalkLoop.Play();
         }
     }
 

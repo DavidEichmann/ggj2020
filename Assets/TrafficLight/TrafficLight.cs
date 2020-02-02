@@ -40,19 +40,19 @@ public class TrafficLight : MonoBehaviour
     // On state change event.
     public TrafficLightEvent OnGreenToAmber;
     public TrafficLightEvent OnAmberToRed;
-    public TrafficLightEvent OnAmberToGreen;
-    public TrafficLightEvent OnRedToGreen;
+    public TrafficLightEvent BrokenToGreen;
 
     // Expected time from Green to Red.
     public float ExpectedGreenToRedSeconds
         => GreenToAmberRateSeconds + MinAmberTime + AmberToRedRateSeconds;
-
 
     //
     // Properties
     //
 
     private WarningLight _warningLight;
+    private KonamiCode _konamiCode;
+    private bool _insideBounds = false;
 
     // Start time we enetered Amber state.
     // Only valid when `State == Amber`
@@ -83,6 +83,7 @@ public class TrafficLight : MonoBehaviour
     private void Awake()
     {
         _warningLight = GetComponent<WarningLight>();
+        _konamiCode = GetComponent<KonamiCode>();
     }
 
     private void Start()
@@ -99,10 +100,10 @@ public class TrafficLight : MonoBehaviour
             case TrafficLightState.Green:
                 if (RandomOccurence(GreenToAmberRateSeconds))
                 {
-                    var oldState = State;
                     State = TrafficLightState.Amber;
                     AmberStartTime = Time.time;
                     _warningLight.SetColor(amber);
+                    if (_insideBounds) EnableKonami();
                     OnGreenToAmber.Invoke(gameObject);
                 }
 
@@ -114,6 +115,7 @@ public class TrafficLight : MonoBehaviour
                 {
                     State = TrafficLightState.Red;
                     _warningLight.SetColor(red);
+                    if (_insideBounds) EnableKonami();
                     OnAmberToRed.Invoke(gameObject);
                 }
 
@@ -134,15 +136,11 @@ public class TrafficLight : MonoBehaviour
             case TrafficLightState.Green:
                 break;
             case TrafficLightState.Amber:
-                State = TrafficLightState.Green;
-                _warningLight.SetColor(green);
-                OnAmberToGreen.Invoke(gameObject);
-                break;
             case TrafficLightState.Red:
                 State = TrafficLightState.Green;
                 _warningLight.SetColor(green);
-                OnRedToGreen.Invoke(gameObject);
-                break;
+                BrokenToGreen.Invoke(gameObject);
+                break;   
         }
     }
 
@@ -167,5 +165,20 @@ public class TrafficLight : MonoBehaviour
 
         return Random.value > probOfNoEvents;
 
+    }
+
+    public void EnableKonami()
+    {
+        _insideBounds = true;
+        if (State != TrafficLightState.Green)
+        {
+            _konamiCode.enabled = true;
+        }
+    }
+
+    public void DisableKonami()
+    {
+        _insideBounds = false;
+        _konamiCode.enabled = false;
     }
 }
