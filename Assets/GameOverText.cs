@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverText : MonoBehaviour
@@ -16,8 +17,10 @@ public class GameOverText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetComponent<Text>().text = _director.IsGameOver
-            ? $"Game Over! {_director.ScoreString(true)}"
-            : "";
+        if (_director.IsGameOver)
+        {
+            PlayerPrefs.SetString("finalScore", _director.ScoreString(true));
+            SceneManager.LoadScene("gameOverScene");
+        }
     }
 }
