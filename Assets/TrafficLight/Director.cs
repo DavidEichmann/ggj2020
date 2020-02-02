@@ -21,14 +21,14 @@ public class Director : MonoBehaviour
     // There are 5 lights, so thats 50 seconds to lose all (1.0) health in 50 seconds from a single red light.
     public float RedDamageRate = 1.0f  / 50.0f;
 
-    // Speed of the bus in Km/h
-    public float SpeedKph = 120;
+    // Speed of the bus in m / s
+    public float BusSpeedKph = 100;
 
-    // Distance travelled (stops increasing on game over).
+    // Distance travelled in meters (stops increasing on game over).
     public float DistanceTravelled = 0;
 
     // Meters traveled rounded down.
-    public int Score => Mathf.FloorToInt(DistanceTravelled * 1000);
+    public int Score => Mathf.FloorToInt(DistanceTravelled);
 
     private TrafficLight[] _trafficLights;
 
@@ -43,13 +43,18 @@ public class Director : MonoBehaviour
     {
         if (!IsGameOver)
         {
-            DistanceTravelled += SpeedKph * Time.deltaTime;
+            // Score
+            float BusSpeedMph = BusSpeedKph * 1000;
+            float BusSpeedMps = BusSpeedMph / (60 * 60);
+            DistanceTravelled += BusSpeedMps * Time.deltaTime;
 
+            // Health
             int numRedLights = _trafficLights.Count(trafficLight => trafficLight.State == TrafficLightState.Red);
             float healthLossRate = numRedLights * RedDamageRate;
             float damage = Time.deltaTime * healthLossRate;
             Health = Mathf.Max(0, Health - damage);
 
+            // Check game over.
             if (Health <= 0)
             {
                 GameOverTime = Time.time;

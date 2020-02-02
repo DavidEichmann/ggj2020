@@ -36,6 +36,14 @@ public class TrafficLight : MonoBehaviour
     // Expected seconds to change from Amber to Red after MinAmberTime.
     public float AmberToRedRateSeconds = 5;
 
+    // When Paused is true, no transitions will happen.
+    public bool Paused = true;
+
+    // Game time when this gets automatically unpaused
+    public float StartTime = 20;
+
+    private float? UnpauseTime;
+
     public Color green;
     public Color amber;
     public Color red;
@@ -117,6 +125,7 @@ public class TrafficLight : MonoBehaviour
 
     private void Start()
     {
+        UnpauseTime = StartTime;
         State = TrafficLightState.Green;
         GreenStartTime = Time.time;
         _warningLight.SetColor(green);
@@ -125,6 +134,12 @@ public class TrafficLight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (UnpauseTime.HasValue && Time.time > UnpauseTime)
+        {
+            Paused = false;
+            UnpauseTime = null;
+        }
+
         switch (State)
         {
             case TrafficLightState.Green:
@@ -180,6 +195,11 @@ public class TrafficLight : MonoBehaviour
     // Assumes this is called over a Time.deltaTime time period.
     private bool RandomOccurence(float rateSeconds)
     {
+        if (Paused)
+        {
+            return false;
+        }
+
         // Convert from seconds per occurence to occurences per second.
         float occurencesPerSecond = 1 / rateSeconds;
 
