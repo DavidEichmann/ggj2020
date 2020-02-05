@@ -2,16 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Linq;
 
 public class PigPlayerController : MonoBehaviour
 {
     public float _jumpforce;
     public float _moveSpeed;
-    public Vector3 _gravity = new Vector3(0, -40);
-    private Rigidbody _rigidbody;
+    // public float _runSpeed;
+    public float _gravity = 40;
+    public float _maxVx;
+    public float _maxVy;
+    private float vx;
+    private float vy;
+    private float ax;
+    private float ay;
+    public float groundFriction = 0.99f;
     private CapsuleCollider _collider;
-    private bool _facingRight = false;
-    private float _distanceToGround;
+    public LayerMask collisionMask;
+    private SpriteRenderer _renderer;
+    private float _halfHeight;
+    private float _halfWidth;
     public static bool konamiMode = false;
 
     public GameObject SoundJumpO;
@@ -19,45 +29,155 @@ public class PigPlayerController : MonoBehaviour
     public GameObject SoundWalkLoopO;
     public AudioSource SoundWalkLoop => SoundWalkLoopO.GetComponent<AudioSource>();
 
+    private float jumpSlackTimer = 0.0f;
+    public float _maxJumpSlack = 1.0f;
+    private float jumpTimer = 0.0f;
+    public float _jumpDuration = 1.0f;
+
     // Start is called before the first frame update
     void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
-        _distanceToGround = _collider.bounds.extents.y;
+        _halfHeight = _collider.bounds.extents.y;
+        _halfWidth = _collider.bounds.extents.x;
+        _renderer = GetComponent<SpriteRenderer>();
 
     }
 
     private void Update()
     {
-        Physics.gravity = _gravity;
-        float movement;
+        // if(Input.GetAxisRaw("Run") > 0.8){
+        //     ax = Input.GetAxisRaw("Horizontal") * _runSpeed;
+        // }
+        ax = Input.GetAxisRaw("Horizontal") * _moveSpeed;
+
+
+        // Which way is pig facing?
+        if (ax > 0)
         {
-            if (Input.GetAxisRaw("Horizontal") == 1)
+            _renderer.flipX = true;
+        }
+        else if (ax < 0)
+        {
+            _renderer.flipX = false;
+        }
+
+        // Sound Effects
+        var soundWalkLoop = SoundWalkLoop;
+        var isWalking = ax != 0 && IsGrounded();
+        if (SoundWalkLoop.isPlaying && !isWalking)
+        {
+            soundWalkLoop.Pause();
+        }
+        if (!SoundWalkLoop.isPlaying && isWalking)
+        {
+            soundWalkLoop.Play();
+        }
+
+        // Jump Stuff
+        jumpSlackTimer -= Time.deltaTime;
+        if(IsGrounded()){
+            jumpSlackTimer = _maxJumpSlack;
+        }
+
+        if(Input.GetButtonDown("Jump")){
+            if (!konamiMode && jumpSlackTimer > 0.0)
             {
-                movement = _moveSpeed;
+                jumpSlackTimer = 0.0f;
+                jumpTimer = _jumpDuration;
+                SoundJump.Play();
             }
-            else if (Input.GetAxisRaw("Horizontal") == -1)
-            {
-                movement = -_moveSpeed;
+        }
+        else if(!Input.GetButton("Jump")){
+            jumpTimer = 0.0f;
+        }
+    }
+
+    void ResolveCollisions(Vector3 direction, float distToEdge){
+        return;
+    }
+
+    void FixedUpdate(){
+
+        // Pre-Collision Movement
+        vx = (vx + ax) * groundFriction;
+        vx = Mathf.Clamp(vx, -_maxVx, _maxVx);
+        transform.Translate(vx * Time.fixedDeltaTime, 0.0f, 0.0f);
+
+        RaycastHit horHit;
+        var numRays = 9;
+        // var vRayYs = new List<float>{transform.position.y - _halfHeight, transform.position.y, transform.position.y + _halfHeight};
+        List<Vector3> rayOriginsH = Enumerable.Range(0, numRays)
+        .Select(y => 2 * _halfHeight * y / (numRays - 1) - _halfHeight)
+        .Select(y => new Vector3(transform.position.x, transform.position.y + y, transform.position.z))
+        .ToList();
+
+        if(vx < 0){
+            foreach(var origin in rayOriginsH){
+                if (Physics.Raycast(origin, Vector3.left, out horHit, _halfWidth * 1.05f, collisionMask))
+                {
+                    transform.position = new Vector3(horHit.point.x + _halfWidth * 1.05f, transform.position.y, transform.position.z);
+                    vx = 0;
+                }
             }
-            else
-            {
-                movement = 0;
+        }
+        if(vx > 0){
+            foreach(var origin in rayOriginsH){
+                if (Physics.Raycast(origin, Vector3.right, out horHit, _halfWidth * 1.05f, collisionMask))
+                {
+                    transform.position = new Vector3(horHit.point.x - _halfWidth * 1.05f, transform.position.y, transform.position.z);
+                    vx = 0;
+                }
             }
         }
 
-        Move(movement);
 
-        if (!konamiMode && Input.GetButtonDown("Jump"))
-        {
-            Jump();
+        jumpTimer -= Time.fixedDeltaTime;
+        if(jumpTimer > 0){
+            vy = _jumpforce;
+        }
+        else{
+            vy -= _gravity;
+        }
+
+        vy = Mathf.Clamp(vy, -_maxVy, _maxVy);
+        transform.Translate(0.0f, vy * Time.fixedDeltaTime, 0.0f);
+
+        // Vertical Collision Detection
+        RaycastHit vertHit;
+        var vRayXs = new List<float>{transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth};
+        if(vy < 0){
+            foreach(var x in vRayXs){
+                if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, out vertHit, _halfHeight, collisionMask))
+                {
+                    transform.position = new Vector3(transform.position.x, vertHit.point.y + _halfHeight, transform.position.z);
+                    Debug.DrawRay(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, Color.red);
+                    vy = 0;
+                }
+            }
+        }
+        if(vy > 0){
+            foreach(var x in vRayXs){
+                if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.up, out vertHit, _halfHeight, collisionMask))
+                {
+                    Debug.DrawRay(new Vector3(x, transform.position.y, transform.position.z), Vector3.up, Color.red, 1.0f);
+                    transform.position = new Vector3(transform.position.x, vertHit.point.y - _halfHeight, transform.position.z);
+                    jumpTimer = 0;
+                    vy = 0;
+                }
+            }
         }
     }
 
     bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, _distanceToGround * 1.05f);
+        var vRayXs = new List<float>{transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth};
+        foreach(var x in vRayXs){
+            if(Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, _halfHeight * 1.05f, collisionMask) && vy <= 0){
+                return true;
+            }
+        }
+        return false;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -70,44 +190,10 @@ public class PigPlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (IsGrounded())
-        {
-            _rigidbody.AddForce(new Vector2(0f, _jumpforce), ForceMode.Impulse);
-            SoundJump.Play();
-        }
     }
 
-    void Move(float rightVelocity)
+    void Move(float moveVel)
     {
-        _rigidbody.velocity = new Vector3(rightVelocity, _rigidbody.velocity.y, _rigidbody.velocity.z);
 
-        if (rightVelocity > 0 && !_facingRight)
-        {
-            Flip();
-        }
-        else if (rightVelocity < 0 && _facingRight)
-        {
-            Flip();
-        }
-
-        var soundWalkLoop = SoundWalkLoop;
-        var isWalking = _rigidbody.velocity.x != 0 && IsGrounded();
-        if (SoundWalkLoop.isPlaying && !isWalking)
-        {
-            soundWalkLoop.Pause();
-        }
-        if (!SoundWalkLoop.isPlaying && isWalking)
-        {
-            soundWalkLoop.Play();
-        }
-    }
-
-    private void Flip()
-    {
-        _facingRight = !_facingRight;
-
-        Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
     }
 }

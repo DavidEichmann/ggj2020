@@ -364,7 +364,7 @@ SpriteRenderer:
   m_Size: {x: 2.46, y: 1.27}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2745184280698562402
@@ -658,7 +658,7 @@ SpriteRenderer:
   m_Size: {x: 2.46, y: 1.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6581117695654204360
@@ -867,7 +867,7 @@ SpriteRenderer:
   m_Size: {x: 2.46, y: 1.22}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8644506717934042144
@@ -988,7 +988,7 @@ SpriteRenderer:
   m_Size: {x: 2.46, y: 1.27}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!54 &8644506718662305787
@@ -1021,7 +1021,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _jumpforce: 50
   _moveSpeed: 25
-  _gravity: {x: 0, y: -150, z: 0}
+  _gravity: 40
+  groundFriction: 0.99
   SoundJumpO: {fileID: 6581117695654204360}
   SoundWalkLoopO: {fileID: 6264765838265148180}
 --- !u!136 &8644506718662305786
@@ -1048,7 +1049,7 @@ Animator:
   m_GameObject: {fileID: 8644506718662305790}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e92a1e6242d0c5e4796c535cacee3fb0, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
