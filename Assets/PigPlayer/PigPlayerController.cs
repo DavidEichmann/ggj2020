@@ -76,11 +76,13 @@ public class PigPlayerController : MonoBehaviour
 
         // Jump Stuff
         jumpSlackTimer -= Time.deltaTime;
-        if(IsGrounded()){
+        if (IsGrounded())
+        {
             jumpSlackTimer = _maxJumpSlack;
         }
 
-        if(Input.GetButtonDown("Jump")){
+        if (Input.GetButtonDown("Jump"))
+        {
             if (!konamiMode && jumpSlackTimer > 0.0)
             {
                 jumpSlackTimer = 0.0f;
@@ -88,16 +90,19 @@ public class PigPlayerController : MonoBehaviour
                 SoundJump.Play();
             }
         }
-        else if(!Input.GetButton("Jump")){
+        else if (!Input.GetButton("Jump"))
+        {
             jumpTimer = 0.0f;
         }
     }
 
-    void ResolveCollisions(Vector3 direction, float distToEdge){
+    void ResolveCollisions(Vector3 direction, float distToEdge)
+    {
         return;
     }
 
-    void FixedUpdate(){
+    void FixedUpdate()
+    {
 
         // Pre-Collision Movement
         vx = (vx + ax) * groundFriction;
@@ -112,8 +117,10 @@ public class PigPlayerController : MonoBehaviour
         .Select(y => new Vector3(transform.position.x, transform.position.y + y, transform.position.z))
         .ToList();
 
-        if(vx < 0){
-            foreach(var origin in rayOriginsH){
+        if (vx < 0)
+        {
+            foreach (var origin in rayOriginsH)
+            {
                 if (Physics.Raycast(origin, Vector3.left, out horHit, _halfWidth * 1.05f, collisionMask))
                 {
                     transform.position = new Vector3(horHit.point.x + _halfWidth * 1.05f, transform.position.y, transform.position.z);
@@ -121,8 +128,10 @@ public class PigPlayerController : MonoBehaviour
                 }
             }
         }
-        if(vx > 0){
-            foreach(var origin in rayOriginsH){
+        if (vx > 0)
+        {
+            foreach (var origin in rayOriginsH)
+            {
                 if (Physics.Raycast(origin, Vector3.right, out horHit, _halfWidth * 1.05f, collisionMask))
                 {
                     transform.position = new Vector3(horHit.point.x - _halfWidth * 1.05f, transform.position.y, transform.position.z);
@@ -133,10 +142,12 @@ public class PigPlayerController : MonoBehaviour
 
 
         jumpTimer -= Time.fixedDeltaTime;
-        if(jumpTimer > 0){
+        if (jumpTimer > 0)
+        {
             vy = _jumpforce;
         }
-        else{
+        else
+        {
             vy -= _gravity;
         }
 
@@ -145,9 +156,11 @@ public class PigPlayerController : MonoBehaviour
 
         // Vertical Collision Detection
         RaycastHit vertHit;
-        var vRayXs = new List<float>{transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth};
-        if(vy < 0){
-            foreach(var x in vRayXs){
+        var vRayXs = new List<float> { transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth };
+        if (vy < 0)
+        {
+            foreach (var x in vRayXs)
+            {
                 if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, out vertHit, _halfHeight, collisionMask))
                 {
                     transform.position = new Vector3(transform.position.x, vertHit.point.y + _halfHeight, transform.position.z);
@@ -156,8 +169,10 @@ public class PigPlayerController : MonoBehaviour
                 }
             }
         }
-        if(vy > 0){
-            foreach(var x in vRayXs){
+        if (vy > 0)
+        {
+            foreach (var x in vRayXs)
+            {
                 if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.up, out vertHit, _halfHeight, collisionMask))
                 {
                     Debug.DrawRay(new Vector3(x, transform.position.y, transform.position.z), Vector3.up, Color.red, 1.0f);
@@ -171,9 +186,11 @@ public class PigPlayerController : MonoBehaviour
 
     bool IsGrounded()
     {
-        var vRayXs = new List<float>{transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth};
-        foreach(var x in vRayXs){
-            if(Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, _halfHeight * 1.05f, collisionMask) && vy <= 0){
+        var vRayXs = new List<float> { transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth };
+        foreach (var x in vRayXs)
+        {
+            if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, _halfHeight * 1.05f, collisionMask) && vy <= 0)
+            {
                 return true;
             }
         }
