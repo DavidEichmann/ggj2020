@@ -18,6 +18,8 @@ public class NeonLightManager : MonoBehaviour
         }
     }
 
+    public NeonLight GetLight(KonamiKeyCode keyCode) => neonLights[(int)keyCode];
+
     public void OnlyOne(KonamiKeyCode keyCode) => OnlyOne((int)keyCode);
     public void OnlyOne(int lightIndex)
     {
