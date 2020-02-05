@@ -32,7 +32,7 @@ public class KonamiCode : MonoBehaviour
     private void OnEnable()
     {
         Generate();
-        PigPlayerController.konamiMode = true;
+        PigPlayerController.KonamiMode = true;
     }
 
     private IEnumerator FlashAllError()
@@ -54,7 +54,7 @@ public class KonamiCode : MonoBehaviour
     {
         StopAllCoroutines();
         _remainingCode.Clear();
-        PigPlayerController.konamiMode = false;
+        PigPlayerController.KonamiMode = false;
         neonLightManager.SwitchAll(false);
     }
 
@@ -148,7 +148,7 @@ public class KonamiCode : MonoBehaviour
     {
         neonLightManager.SwitchAll(false);
         _trafficLight.TryRepair();
-        PigPlayerController.konamiMode = false;
+        PigPlayerController.KonamiMode = false;
         OnSuccess.Invoke();
         enabled = false;
     }

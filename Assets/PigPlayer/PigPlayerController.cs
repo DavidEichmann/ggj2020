@@ -6,33 +6,38 @@ using System.Linq;
 
 public class PigPlayerController : MonoBehaviour
 {
-    public float _jumpforce;
-    public float _moveSpeed;
+    public float Jumpforce;
+    public float MoveSpeed;
     // public float _runSpeed;
-    public float _gravity = 40;
-    public float _maxVx;
-    public float _maxVy;
-    private float vx;
-    private float vy;
-    private float ax;
-    private float ay;
-    public float groundFriction = 0.99f;
-    private CapsuleCollider _collider;
-    public LayerMask collisionMask;
-    private SpriteRenderer _renderer;
-    private float _halfHeight;
-    private float _halfWidth;
-    public static bool konamiMode = false;
+    public float Gravity = 40;
+    public float MaxVx;
+    public float MaxVy;
+    public static bool KonamiMode = false;
+    public float GroundFriction = 0.99f;
+    public LayerMask CollisionMask;
+    public float MaxJumpSlack = 1.0f;
+    public float JumpDuration = 1.0f;
 
     public GameObject SoundJumpO;
-    public AudioSource SoundJump => SoundJumpO.GetComponent<AudioSource>();
+    public AudioSource SoundJump;
     public GameObject SoundWalkLoopO;
-    public AudioSource SoundWalkLoop => SoundWalkLoopO.GetComponent<AudioSource>();
+    public AudioSource SoundWalkLoop;
 
-    private float jumpSlackTimer = 0.0f;
-    public float _maxJumpSlack = 1.0f;
-    private float jumpTimer = 0.0f;
-    public float _jumpDuration = 1.0f;
+    private float _vx;
+    private float _vy;
+    private float _ax;
+    private float _ay;
+    private float _jumpSlackTimer = 0.0f;
+    private float _jumpTimer = 0.0f;
+    private float _halfHeight;
+    private float _halfWidth;
+
+    private CapsuleCollider _collider;
+    private SpriteRenderer _renderer;
+
+
+
+
 
     // Start is called before the first frame update
     void Awake()
@@ -41,7 +46,8 @@ public class PigPlayerController : MonoBehaviour
         _halfHeight = _collider.bounds.extents.y;
         _halfWidth = _collider.bounds.extents.x;
         _renderer = GetComponent<SpriteRenderer>();
-
+        SoundJump = SoundJumpO.GetComponent<AudioSource>();
+        SoundWalkLoop = SoundWalkLoopO.GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -49,22 +55,22 @@ public class PigPlayerController : MonoBehaviour
         // if(Input.GetAxisRaw("Run") > 0.8){
         //     ax = Input.GetAxisRaw("Horizontal") * _runSpeed;
         // }
-        ax = Input.GetAxisRaw("Horizontal") * _moveSpeed;
+        _ax = Input.GetAxisRaw("Horizontal") * MoveSpeed;
 
 
         // Which way is pig facing?
-        if (ax > 0)
+        if (_ax > 0)
         {
             _renderer.flipX = true;
         }
-        else if (ax < 0)
+        else if (_ax < 0)
         {
             _renderer.flipX = false;
         }
 
         // Sound Effects
         var soundWalkLoop = SoundWalkLoop;
-        var isWalking = ax != 0 && IsGrounded();
+        var isWalking = _ax != 0 && IsGrounded();
         if (SoundWalkLoop.isPlaying && !isWalking)
         {
             soundWalkLoop.Pause();
@@ -75,39 +81,34 @@ public class PigPlayerController : MonoBehaviour
         }
 
         // Jump Stuff
-        jumpSlackTimer -= Time.deltaTime;
+        _jumpSlackTimer -= Time.deltaTime;
         if (IsGrounded())
         {
-            jumpSlackTimer = _maxJumpSlack;
+            _jumpSlackTimer = MaxJumpSlack;
         }
 
         if (Input.GetButtonDown("Jump"))
         {
-            if (!konamiMode && jumpSlackTimer > 0.0)
+            if (!KonamiMode && _jumpSlackTimer > 0.0)
             {
-                jumpSlackTimer = 0.0f;
-                jumpTimer = _jumpDuration;
+                _jumpSlackTimer = 0.0f;
+                _jumpTimer = JumpDuration;
                 SoundJump.Play();
             }
         }
         else if (!Input.GetButton("Jump"))
         {
-            jumpTimer = 0.0f;
+            _jumpTimer = 0.0f;
         }
-    }
-
-    void ResolveCollisions(Vector3 direction, float distToEdge)
-    {
-        return;
     }
 
     void FixedUpdate()
     {
 
         // Pre-Collision Movement
-        vx = (vx + ax) * groundFriction;
-        vx = Mathf.Clamp(vx, -_maxVx, _maxVx);
-        transform.Translate(vx * Time.fixedDeltaTime, 0.0f, 0.0f);
+        _vx = (_vx + _ax) * GroundFriction;
+        _vx = Mathf.Clamp(_vx, -MaxVx, MaxVx);
+        transform.Translate(_vx * Time.fixedDeltaTime, 0.0f, 0.0f);
 
         RaycastHit horHit;
         var numRays = 9;
@@ -117,68 +118,67 @@ public class PigPlayerController : MonoBehaviour
         .Select(y => new Vector3(transform.position.x, transform.position.y + y, transform.position.z))
         .ToList();
 
-        if (vx < 0)
+        if (_vx < 0)
         {
             foreach (var origin in rayOriginsH)
             {
-                if (Physics.Raycast(origin, Vector3.left, out horHit, _halfWidth * 1.05f, collisionMask))
+                if (Physics.Raycast(origin, Vector3.left, out horHit, _halfWidth * 1.05f, CollisionMask))
                 {
                     transform.position = new Vector3(horHit.point.x + _halfWidth * 1.05f, transform.position.y, transform.position.z);
-                    vx = 0;
+                    _vx = 0;
                 }
             }
         }
-        if (vx > 0)
+        if (_vx > 0)
         {
             foreach (var origin in rayOriginsH)
             {
-                if (Physics.Raycast(origin, Vector3.right, out horHit, _halfWidth * 1.05f, collisionMask))
+                if (Physics.Raycast(origin, Vector3.right, out horHit, _halfWidth * 1.05f, CollisionMask))
                 {
                     transform.position = new Vector3(horHit.point.x - _halfWidth * 1.05f, transform.position.y, transform.position.z);
-                    vx = 0;
+                    _vx = 0;
                 }
             }
         }
 
-
-        jumpTimer -= Time.fixedDeltaTime;
-        if (jumpTimer > 0)
+        _jumpTimer -= Time.fixedDeltaTime;
+        if (_jumpTimer > 0)
         {
-            vy = _jumpforce;
+            _vy = Jumpforce;
         }
         else
         {
-            vy -= _gravity;
+            _vy -= Gravity;
         }
 
-        vy = Mathf.Clamp(vy, -_maxVy, _maxVy);
-        transform.Translate(0.0f, vy * Time.fixedDeltaTime, 0.0f);
+        _vy = Mathf.Clamp(_vy, -MaxVy, MaxVy);
+        transform.Translate(0.0f, _vy * Time.fixedDeltaTime, 0.0f);
 
         // Vertical Collision Detection
         RaycastHit vertHit;
         var vRayXs = new List<float> { transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth };
-        if (vy < 0)
+        if (_vy < 0)
         {
             foreach (var x in vRayXs)
             {
-                if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, out vertHit, _halfHeight, collisionMask))
+                if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, out vertHit, _halfHeight, CollisionMask))
                 {
                     transform.position = new Vector3(transform.position.x, vertHit.point.y + _halfHeight, transform.position.z);
                     Debug.DrawRay(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, Color.red);
-                    vy = 0;
+                    _vy = 0;
                 }
             }
         }
-        if (vy > 0)
+        if (_vy > 0)
         {
             foreach (var x in vRayXs)
             {
-                if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.up, out vertHit, _halfHeight, collisionMask))
+                if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.up, out vertHit, _halfHeight, CollisionMask))
                 {
                     Debug.DrawRay(new Vector3(x, transform.position.y, transform.position.z), Vector3.up, Color.red, 1.0f);
                     transform.position = new Vector3(transform.position.x, vertHit.point.y - _halfHeight, transform.position.z);
-                    jumpTimer = 0;
-                    vy = 0;
+                    _jumpTimer = 0;
+                    _vy = 0;
                 }
             }
         }
@@ -189,7 +189,7 @@ public class PigPlayerController : MonoBehaviour
         var vRayXs = new List<float> { transform.position.x - _halfWidth, transform.position.x, transform.position.x + _halfWidth };
         foreach (var x in vRayXs)
         {
-            if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, _halfHeight * 1.05f, collisionMask) && vy <= 0)
+            if (Physics.Raycast(new Vector3(x, transform.position.y, transform.position.z), Vector3.down, _halfHeight * 1.05f, CollisionMask) && _vy <= 0)
             {
                 return true;
             }
