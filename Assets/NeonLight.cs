@@ -26,6 +26,11 @@ public class NeonLight : MonoBehaviour
         }
     }
 
+    public void PlaySound()
+    {
+        GetComponent<AudioSource>()?.Play();
+    }
+
     // Update is called once per frame
     void Update()
     {

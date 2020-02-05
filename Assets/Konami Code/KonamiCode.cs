@@ -18,8 +18,8 @@ public enum KonamiKeyCode
 
 public class KonamiCode : MonoBehaviour
 {
-    public UnityEvent OnFailure;
-    public UnityEvent OnSuccess;
+    public GameObject FailureAudio;
+    public GameObject SuccessAudio;
 
     public int length = 3;
     [SerializeField] private NeonLightManager neonLightManager;
@@ -122,6 +122,7 @@ public class KonamiCode : MonoBehaviour
     {
         if (keyCode == _remainingCode.Peek())
         {
+
             _remainingCode.Dequeue();
             if (_remainingCode.Count == 0)
             {
@@ -129,6 +130,7 @@ public class KonamiCode : MonoBehaviour
             }
             else
             {
+                neonLightManager.GetLight(keyCode).PlaySound();
                 StartCoroutine("FlashNext");
             }
         }
@@ -141,7 +143,7 @@ public class KonamiCode : MonoBehaviour
     private void Error()
     {
         StartCoroutine("FlashAllError");
-        OnFailure.Invoke();
+        FailureAudio?.GetComponent<AudioSource>()?.Play();
     }
 
     private void Success()
@@ -149,7 +151,7 @@ public class KonamiCode : MonoBehaviour
         neonLightManager.SwitchAll(false);
         _trafficLight.TryRepair();
         PigPlayerController.KonamiMode = false;
-        OnSuccess.Invoke();
+        SuccessAudio?.GetComponent<AudioSource>()?.Play();
         enabled = false;
     }
 
