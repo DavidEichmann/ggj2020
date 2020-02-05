@@ -114,6 +114,8 @@ MonoBehaviour:
   GreenToAmberRateSeconds: 15
   MinAmberTime: 10
   AmberToRedRateSeconds: 5
+  Paused: 1
+  StartTime: 20
   green: {r: 0.4, g: 1, b: 0.2, a: 0}
   amber: {r: 1, g: 0.6397213, b: 0.19999999, a: 0}
   red: {r: 1, g: 0.22493628, b: 0.19999999, a: 0}
@@ -272,7 +274,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
