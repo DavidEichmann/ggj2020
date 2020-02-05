@@ -6,20 +6,26 @@ public class ChangeColor : MonoBehaviour
     public Image fill;
     public Color maxHealthColor = Color.green;
     public Color minHealthColor = Color.red;
+    public Renderer LightRenderer;
 
-    private Slider _slider;
+    private Transform _hpObj;
+
     private Director _director;
 
     private void Start()
     {
-        _slider = GetComponent<Slider>();
+        _hpObj = GetComponent<Transform>();
         _director = FindObjectOfType<Director>();
     }
 
-    private void OnGUI()
+    private void Update()
     {
-        var health = _director.Health;
-        _slider.value = health;
-        fill.color = Color.Lerp(minHealthColor, maxHealthColor, health);
+        if (_hpObj != null)
+        {
+            _hpObj.localScale = new Vector3(_director.Health, _hpObj.localScale.y, _hpObj.localScale.z);
+            LightRenderer.material.SetColor("_EmissionColor", Color.Lerp(minHealthColor, maxHealthColor, _director.Health));
+
+        }
     }
+
 }
