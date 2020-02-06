@@ -8,14 +8,25 @@ public class ZoomController : MonoBehaviour
     private float _smoothFactor;
     private Vector3 _targetPosition;
 
+    private Director _director;
+
+    private void Awake()
+    {
+        _director = FindObjectOfType<Director>();
+    }
+
     private void Start()
     {
         _smoothFactor = 2;
-        ZoomIn();
     }
 
     private void Update()
     {
+        if (!_director.IsGameStarted)
+        {
+            return;
+        }
+
         transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, Time.deltaTime * _smoothFactor);
         if (Input.GetKey(KeyCode.Joystick1Button4))
         {

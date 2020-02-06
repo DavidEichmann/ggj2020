@@ -63,6 +63,7 @@ public class TrafficLight : MonoBehaviour
 
     private WarningLight _warningLight;
     private KonamiCode _konamiCode;
+    private Director _director;
     private bool _insideBounds = false;
 
     // Start time we enetered Amber state.
@@ -121,20 +122,21 @@ public class TrafficLight : MonoBehaviour
     {
         _warningLight = GetComponent<WarningLight>();
         _konamiCode = GetComponent<KonamiCode>();
+        _director = FindObjectOfType<Director>();
     }
 
     private void Start()
     {
         UnpauseTime = StartTime;
         State = TrafficLightState.Green;
-        GreenStartTime = Time.time;
+        GreenStartTime = _director.GameTime;
         _warningLight.SetColor(green);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (UnpauseTime.HasValue && Time.time > UnpauseTime)
+        if (UnpauseTime.HasValue && _director.GameTime > UnpauseTime)
         {
             Paused = false;
             UnpauseTime = null;
@@ -143,11 +145,11 @@ public class TrafficLight : MonoBehaviour
         switch (State)
         {
             case TrafficLightState.Green:
-                float timeSinceEndSafeGreen = Time.time - (GreenStartTime + MinGreenTime);
+                float timeSinceEndSafeGreen = _director.GameTime - (GreenStartTime + MinGreenTime);
                 if (timeSinceEndSafeGreen > 0 && RandomOccurence(GreenToAmberRateSeconds))
                 {
                     State = TrafficLightState.Amber;
-                    AmberStartTime = Time.time;
+                    AmberStartTime = _director.GameTime;
                     _warningLight.SetColor(amber);
                     if (_insideBounds) EnableKonami();
                     OnGreenToAmber.Invoke(gameObject);
@@ -156,7 +158,7 @@ public class TrafficLight : MonoBehaviour
                 break;
 
             case TrafficLightState.Amber:
-                float timeSinceEndSafeAmber = Time.time - (AmberStartTime + MinAmberTime);
+                float timeSinceEndSafeAmber = _director.GameTime - (AmberStartTime + MinAmberTime);
                 if (timeSinceEndSafeAmber > 0 && RandomOccurence(AmberToRedRateSeconds))
                 {
                     State = TrafficLightState.Red;
@@ -184,10 +186,10 @@ public class TrafficLight : MonoBehaviour
             case TrafficLightState.Amber:
             case TrafficLightState.Red:
                 State = TrafficLightState.Green;
-                GreenStartTime = Time.time;
+                GreenStartTime = _director.GameTime;
                 _warningLight.SetColor(green);
                 BrokenToGreen.Invoke(gameObject);
-                break;   
+                break;
         }
     }
 
