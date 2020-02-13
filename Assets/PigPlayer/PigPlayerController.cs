@@ -204,13 +204,4 @@ public class PigPlayerController : MonoBehaviour
             Debug.DrawRay(contact.point, contact.normal, Color.white);
         }
     }
-
-    void Jump()
-    {
-    }
-
-    void Move(float moveVel)
-    {
-
-    }
 }
