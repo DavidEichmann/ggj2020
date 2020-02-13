@@ -1,24 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class PanCamera : MonoBehaviour
 {
-    private Vector3 _initialPosition;
-    private Vector3 _targetPosition;
-    private Vector3 _lookAtPosition;
+    public List<Vector3> targetOffsets;
     private float _startTime;
     private Director _director;
+    private CameraFollower _camFollower;
 
-    public Transform targetTransform;
-    public Transform lookAtTransform;
+    public Transform player;
     public float secondsToPan;
-    public Camera mainCamera;
+    private int currentOffset = 0;
+
+    public bool skipPan = false;
 
     private void Awake()
     {
-        _initialPosition = transform.position;
-        _targetPosition = targetTransform.position;
-        _lookAtPosition = lookAtTransform.position;
         _director = FindObjectOfType<Director>();
+        _camFollower = GetComponent<CameraFollower>();
     }
 
     private void Start()
@@ -28,16 +27,30 @@ public class PanCamera : MonoBehaviour
 
     private void Update()
     {
-        var fracComplete = (Time.time - _startTime) / secondsToPan;
-        transform.position = Vector3.Slerp(_initialPosition, _targetPosition, fracComplete);
-        transform.LookAt(_lookAtPosition);
 
-        // TODO: Fix weird camera switch
-        if (transform.position == _targetPosition)
-        {
-            mainCamera.enabled = true;
+        if(skipPan){
             _director.StartGame();
-            Destroy(gameObject);
+            _camFollower.enabled = true;
+            this.enabled = false;
+            return;
+        }
+
+        var prevPos = player.position + targetOffsets[currentOffset];
+        var targetPos = player.position + targetOffsets[currentOffset + 1];
+        var fracComplete = (Time.time - _startTime) / secondsToPan;
+        transform.position = Vector3.Slerp(prevPos, targetPos, fracComplete);
+        transform.LookAt(player.position);
+
+        if (transform.position == targetPos)
+        {
+            currentOffset += 1;
+            _startTime = Time.time;
+        }
+
+        if(currentOffset + 1 == targetOffsets.Count){
+            _director.StartGame();
+            _camFollower.enabled = true;
+            this.enabled = false;
         }
     }
 }

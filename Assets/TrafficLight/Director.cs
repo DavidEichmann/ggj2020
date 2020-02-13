@@ -7,6 +7,7 @@ using UnityEngine.Events;
 public class Director : MonoBehaviour
 {
     public UnityEvent OnGameOver;
+    public PigPlayerController player;
 
     // Time at which the game was lost. Null if not lost yet
     public float? GameOverTime { get; private set; } = null;
@@ -37,12 +38,14 @@ public class Director : MonoBehaviour
 
     public void StartGame()
     {
+        player.enabled = true;
         GameStartTime = Time.time;
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        player.enabled = false;
         _trafficLights = FindObjectsOfType<TrafficLight>();
     }
 
