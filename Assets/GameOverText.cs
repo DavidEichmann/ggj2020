@@ -17,10 +17,10 @@ public class GameOverText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_director.IsGameOver)
-        {
-            PlayerPrefs.SetString("finalScore", _director.ScoreString(true));
-            SceneManager.LoadScene("gameOverScene");
-        }
+        //if (_director.IsGameOver)
+        //{
+        //    PlayerPrefs.SetString("finalScore", _director.ScoreString(true));
+        //    SceneManager.LoadScene("gameOverScene");
+        //}
     }
 }

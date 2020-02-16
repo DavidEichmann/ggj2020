@@ -9,6 +9,8 @@ public class Director : MonoBehaviour
     public UnityEvent OnGameOver;
     public PigPlayerController player;
 
+    public TerrainController Terrain;
+
     // Time at which the game was lost. Null if not lost yet
     public float? GameOverTime { get; private set; } = null;
     public float? GameStartTime { get; private set; } = null;
@@ -81,6 +83,12 @@ public class Director : MonoBehaviour
                 OnGameOver.Invoke();
             }
         }
+
+        if (IsGameOver)
+        {
+
+        }
+
     }
     public string ScoreString(bool subseconds)
         => $"{Score} m";

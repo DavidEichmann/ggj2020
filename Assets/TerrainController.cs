@@ -2,37 +2,41 @@
 
 public class TerrainController : MonoBehaviour
 {
-    public float speed;
+    public float SpeedFactor = 1f;
 
-    private Vector3 initialPos;
-    private float length;
-    private float createX;
-    private bool created;
-
+    private float _speed;
+    private Vector3 _initialPos;
+    private float _length;
+    private float _createX;
+    private bool _created;
+    private Director _director;
     private void Awake()
     {
-        initialPos = transform.position;
+        _initialPos = transform.position;
     }
 
     private void Start()
     {
+        _director = FindObjectOfType<Director>();
         var children = GetComponentsInChildren<MeshRenderer>();
         foreach (var child in children)
         {
-            length += child.bounds.size.x;
+            _length += child.bounds.size.x;
         }
-        createX = length / children.Length;
+        _createX = _length / children.Length;
     }
 
     private void Update()
     {
-        transform.Translate(new Vector3(speed, 0) * Time.deltaTime);
+        _speed = _director.BusMeterPerSec * SpeedFactor;
 
-        if (!created && transform.position.x > createX)
+        transform.Translate(new Vector3(_speed, 0) * Time.deltaTime);
+
+        if (!_created && transform.position.x > _createX)
         {
-            Create(transform.position.x - length);
+            Create(transform.position.x - _length);
         }
-        if (created && transform.position.x > length)
+        if (_created && transform.position.x > _length)
         {
             Destroy(gameObject);
         }
@@ -40,8 +44,8 @@ public class TerrainController : MonoBehaviour
 
     private void Create(float x)
     {
-        created = true;
-        initialPos.x = x;
-        Instantiate(gameObject, initialPos, Quaternion.identity);
+        _created = true;
+        _initialPos.x = x;
+        Instantiate(gameObject, _initialPos, Quaternion.identity);
     }
 }

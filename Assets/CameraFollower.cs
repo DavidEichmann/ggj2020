@@ -46,13 +46,22 @@ public class CameraFollower : MonoBehaviour
             targetPos.y = player.position.y + followHeight;
         }
 
+        
         if (Input.GetKey(KeyCode.Joystick1Button4))
         {
             targetPos.z = zoomedOutPosition;
         }
         else
         {
-            targetPos.z = zoomedInPosition;
+            //force zoom out on game over
+            if (_director.IsGameOver)
+            {
+                targetPos.z = zoomedOutPosition;
+            }
+            else
+            {
+                targetPos.z = zoomedInPosition;
+            }
         }
 
         transform.localPosition = Vector3.Lerp(transform.localPosition, targetPos, Time.deltaTime * _smoothFactor);
