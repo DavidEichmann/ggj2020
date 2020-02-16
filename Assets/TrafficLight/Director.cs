@@ -30,6 +30,7 @@ public class Director : MonoBehaviour
 
     // Distance travelled in meters (stops increasing on game over).
     public float DistanceTravelled = 0;
+    public float BusMeterPerSec = 0;
 
     // Meters traveled rounded down.
     public int Score => Mathf.FloorToInt(DistanceTravelled);
@@ -47,11 +48,16 @@ public class Director : MonoBehaviour
     {
         player.enabled = false;
         _trafficLights = FindObjectsOfType<TrafficLight>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        float BusSpeedMph = BusSpeedKph * 1000;
+        BusMeterPerSec = BusSpeedMph / (60 * 60);
+        DistanceTravelled += BusMeterPerSec * Time.deltaTime;
+
         if (!IsGameStarted)
         {
             return;
@@ -60,9 +66,7 @@ public class Director : MonoBehaviour
         if (!IsGameOver)
         {
             // Score
-            float BusSpeedMph = BusSpeedKph * 1000;
-            float BusSpeedMps = BusSpeedMph / (60 * 60);
-            DistanceTravelled += BusSpeedMps * Time.deltaTime;
+       
 
             // Health
             int numRedLights = _trafficLights.Count(trafficLight => trafficLight.State == TrafficLightState.Red);
