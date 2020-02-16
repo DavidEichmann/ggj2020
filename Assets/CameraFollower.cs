@@ -4,6 +4,7 @@ public class CameraFollower : MonoBehaviour
 {
     public float zoomedInPosition;
     public float zoomedOutPosition;
+    public float zoomedOutPositionFinal;
     private float _smoothFactor;
 
     public Transform player;
@@ -46,21 +47,20 @@ public class CameraFollower : MonoBehaviour
             targetPos.y = player.position.y + followHeight;
         }
 
-        
-        if (Input.GetKey(KeyCode.Joystick1Button4))
+        //force zoom out on game over
+        if (_director.IsGameOver)
         {
-            targetPos.z = zoomedOutPosition;
-        }
+            targetPos.z = zoomedOutPositionFinal;
+        } 
         else
         {
-            //force zoom out on game over
-            if (_director.IsGameOver)
+            if (Input.GetKey(KeyCode.Joystick1Button4))
             {
                 targetPos.z = zoomedOutPosition;
             }
             else
             {
-                targetPos.z = zoomedInPosition;
+                targetPos.z = zoomedInPosition;             
             }
         }
 

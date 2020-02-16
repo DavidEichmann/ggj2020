@@ -38,6 +38,7 @@ public class Director : MonoBehaviour
     public int Score => Mathf.FloorToInt(DistanceTravelled);
 
     private TrafficLight[] _trafficLights;
+    private bool _hasGameOverEventHappened = false;
 
     public void StartGame()
     {
@@ -80,13 +81,21 @@ public class Director : MonoBehaviour
             if (Health <= 0)
             {
                 GameOverTime = GameTime;
-                OnGameOver.Invoke();
+                if (!_hasGameOverEventHappened)
+                {
+                    OnGameOver.Invoke();
+                    _hasGameOverEventHappened = true;
+                }
             }
         }
 
         if (IsGameOver)
         {
-
+            if(BusSpeedKph > 0.1)
+            {
+                BusSpeedKph *= 0.995f;
+            }
+        
         }
 
     }
