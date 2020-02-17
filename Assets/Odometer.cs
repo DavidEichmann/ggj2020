@@ -23,7 +23,6 @@ public class Odometer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         RotateNumToCorrectPosition(Num1, 1f);
         RotateNumToCorrectPosition(Num2, 10f);
         RotateNumToCorrectPosition(Num3, 100f);
@@ -33,13 +32,17 @@ public class Odometer : MonoBehaviour
 
     void RotateNumToCorrectPosition(Transform numObject, float unit)
     {
-        if(Incremental)
+        //This is to give the effect of only rolling over each wheel when the previous one hits 9
+        var lastComponent = _director.DistanceTravelled / (unit/10f) % 10;
+        if (lastComponent > 9)
         {
-            numObject.eulerAngles = new Vector3(numObject.eulerAngles.x, numObject.eulerAngles.y, (int)_director.DistanceTravelled / (int)unit % 10 * 36);
+            var wholeValueCurrentComponent = (int)_director.DistanceTravelled / (int)unit % 10;
+            numObject.eulerAngles = new Vector3(numObject.eulerAngles.x, numObject.eulerAngles.y, (wholeValueCurrentComponent + (lastComponent % 1)) * 36);
         }
         else
         {
-            numObject.eulerAngles = new Vector3(numObject.eulerAngles.x, numObject.eulerAngles.y, (int)_director.DistanceTravelled / unit % 10 * 36);
+            numObject.eulerAngles = new Vector3(numObject.eulerAngles.x, numObject.eulerAngles.y, (int)_director.DistanceTravelled / (int)unit % 10 * 36);
         }
+        
     }
 }
