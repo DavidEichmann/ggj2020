@@ -12,6 +12,8 @@ public class Director : MonoBehaviour
 
     public TerrainController Terrain;
 
+    public float GameOverDecelaration;
+
     // Time at which the game was lost. Null if not lost yet
     public float? GameOverTime { get; private set; } = null;
     public float? GameStartTime { get; private set; } = null;
@@ -98,11 +100,7 @@ public class Director : MonoBehaviour
 
         if (IsGameOver)
         {
-            if(BusSpeedKph > 0.1)
-            {
-                BusSpeedKph *= 0.995f;
-            }
-        
+            BusSpeedKph = Mathf.Max(0, BusSpeedKph - (GameOverDecelaration * Time.deltaTime));
         }
 
     }
