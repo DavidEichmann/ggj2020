@@ -35,25 +35,31 @@ public class Retry : MonoBehaviour
     }
     private void Error()
     {
-        StartCoroutine("FlashError");
+        StartCoroutine(FlashError());
         FailureAudio?.GetComponent<AudioSource>()?.Play();
     }
     private IEnumerator FlashError()
     {
-        NeonA.SwitchLight(true);
-        yield return new WaitForSeconds(0.5f);
         NeonA.SwitchLight(false);
+        yield return new WaitForSeconds(0.5f);
+        NeonA.SwitchLight(true);
     }
 
     private void Success()
     {
         SuccessAudio?.GetComponent<AudioSource>()?.Play();
+        StartCoroutine(Restart());
+    }
+
+    private IEnumerator Restart()
+    {
+        yield return new WaitForSeconds(2f);
         _director.RestartGame();
     }
 
     private void Start()
     {
-      
+        NeonA.SwitchLight(false);
     }
 
     private void Update()
