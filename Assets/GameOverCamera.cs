@@ -60,4 +60,5 @@ public class GameOverCamera : MonoBehaviour
 
         transform.position = Vector3.Lerp(sectionStart, sectionEnd, sectionT);
     }
+
 }
