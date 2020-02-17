@@ -46,6 +46,11 @@ public class Director : MonoBehaviour
         GameStartTime = Time.time;
     }
 
+    public void RestartGame()
+    {
+        //Restart
+    }
+
     // Start is called before the first frame update
     void Start()
     {
