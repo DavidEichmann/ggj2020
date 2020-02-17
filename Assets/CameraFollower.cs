@@ -50,7 +50,10 @@ public class CameraFollower : MonoBehaviour
         //force zoom out on game over
         if (_director.IsGameOver)
         {
-            targetPos.z = zoomedOutPositionFinal;
+            var goc = GetComponent<GameOverCamera>();
+            goc.Restart();
+            goc.enabled = true;
+            this.enabled = false;
         } 
         else
         {
