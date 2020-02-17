@@ -10,10 +10,10 @@ public class GameOverCamera : MonoBehaviour
     public Transform OdometerCamPosition;
     public UnityEvent DoneEvent;
 
-    private float _startTime;
+    public float _startTime;
     private Vector3 _startPosition;
 
-    void OnEnable()
+    public void Restart()
     {
         _startTime = Time.time;
         _startPosition = transform.position;
@@ -39,14 +39,14 @@ public class GameOverCamera : MonoBehaviour
         else if (t < sectionTime * 2)
         {
             // Keep looking at the bus.
-            sectionT = (t / sectionTime) - 2;
+            sectionT = (t / sectionTime) - 1;
             sectionStart = BusCamPosition.position;
             sectionEnd = BusCamPosition.position;
         }
         else
         {
             // Move to bus cam position.
-            sectionT = (t / sectionTime) - 1;
+            sectionT = (t / sectionTime) - 2;
             sectionStart = BusCamPosition.position;
             sectionEnd = OdometerCamPosition.position;
 
@@ -58,6 +58,6 @@ public class GameOverCamera : MonoBehaviour
             }
         }
 
-        Vector3.Lerp(sectionStart, sectionEnd, sectionT);
+        transform.position = Vector3.Lerp(sectionStart, sectionEnd, sectionT);
     }
 }
