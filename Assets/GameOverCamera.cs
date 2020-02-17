@@ -53,6 +53,7 @@ public class GameOverCamera : MonoBehaviour
             if (sectionT > 1)
             {
                 // Done!
+                
                 DoneEvent.Invoke();
                 this.enabled = false;
             }
