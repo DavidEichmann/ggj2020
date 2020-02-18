@@ -37,7 +37,12 @@ public class PigPlayerController : MonoBehaviour
 
 
 
-
+    public void EnableCheatMode()
+    {
+        Jumpforce = 40;
+        MoveSpeed = 15;
+        Gravity = 3;
+    }
 
     // Start is called before the first frame update
     void Awake()

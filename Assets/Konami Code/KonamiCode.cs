@@ -20,6 +20,9 @@ public class KonamiCode : MonoBehaviour
 {
     public GameObject FailureAudio;
     public GameObject SuccessAudio;
+    public KonamiKeyCode[] HardCode;
+
+    public UnityEvent OnSuccess;
 
     public int length = 3;
     [SerializeField] private NeonLightManager neonLightManager;
@@ -37,17 +40,17 @@ public class KonamiCode : MonoBehaviour
 
     private IEnumerator FlashAllError()
     {
-        neonLightManager.SwitchAll(true);
+        neonLightManager?.SwitchAll(true);
         yield return new WaitForSeconds(0.5f);
-        neonLightManager.SwitchAll(false);
+        neonLightManager?.SwitchAll(false);
         Generate();
     }
 
     private IEnumerator FlashNext()
     {
-        neonLightManager.SwitchAll(false);
+        neonLightManager?.SwitchAll(false);
         yield return new WaitForSeconds(0.1f);
-        neonLightManager.OnlyOne(_remainingCode.Peek());
+        neonLightManager?.OnlyOne(_remainingCode.Peek());
     }
 
     private void OnDisable()
@@ -55,7 +58,7 @@ public class KonamiCode : MonoBehaviour
         StopAllCoroutines();
         _remainingCode.Clear();
         PigPlayerController.KonamiMode = false;
-        neonLightManager.SwitchAll(false);
+        neonLightManager?.SwitchAll(false);
     }
 
     private void Awake()
@@ -130,7 +133,7 @@ public class KonamiCode : MonoBehaviour
             }
             else
             {
-                neonLightManager.GetLight(keyCode).PlaySound();
+                neonLightManager?.GetLight(keyCode).PlaySound();
                 StartCoroutine("FlashNext");
             }
         }
@@ -148,22 +151,33 @@ public class KonamiCode : MonoBehaviour
 
     private void Success()
     {
-        neonLightManager.SwitchAll(false);
-        _trafficLight.TryRepair();
+        neonLightManager?.SwitchAll(false);
+        _trafficLight?.TryRepair();
         PigPlayerController.KonamiMode = false;
         SuccessAudio?.GetComponent<AudioSource>()?.Play();
+        OnSuccess?.Invoke();
         enabled = false;
     }
 
     public void Generate()
     {
-        var code = new KonamiKeyCode[length];
-        for (var i = 0; i < length; i++)
+        if (HardCode != null && HardCode.Length > 0)
         {
-            code[i] = (KonamiKeyCode)_values.GetValue(UnityEngine.Random.Range(0, _values.Length));
+            _remainingCode = new Queue<KonamiKeyCode>(HardCode);
         }
-        _remainingCode = new Queue<KonamiKeyCode>(code);
+        else
+        {
+
+            var code = new KonamiKeyCode[length];
+            for (var i = 0; i < length; i++)
+            {
+                code[i] = (KonamiKeyCode)_values.GetValue(UnityEngine.Random.Range(0, _values.Length));
+            }
+            _remainingCode = new Queue<KonamiKeyCode>(code);
+        }
+        
         StartCoroutine("FlashNext");
+        
     }
 
     public void IncreaseDifficulty()
